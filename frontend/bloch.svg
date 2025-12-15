@@ -1,0 +1,42 @@
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <radialGradient id="sphereFill" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="60%" stop-color="#eef3ff"/>
+      <stop offset="100%" stop-color="#dde7ff"/>
+    </radialGradient>
+    <linearGradient id="rim" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a84ff" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#5856d6" stop-opacity="0.35"/>
+    </linearGradient>
+    <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- Sphere -->
+  <circle cx="120" cy="120" r="95" fill="url(#sphereFill)" stroke="url(#rim)" stroke-width="2"/>
+  <!-- Equator and axes -->
+  <g stroke="#a7b6e6" stroke-width="1.5" opacity="0.9">
+    <circle cx="120" cy="120" r="70" fill="none"/>
+    <line x1="25" y1="120" x2="215" y2="120"/>
+    <line x1="120" y1="25" x2="120" y2="215"/>
+  </g>
+  <!-- Latitude circles -->
+  <g stroke="#c2cdee" stroke-width="1" opacity="0.7">
+    <circle cx="120" cy="120" r="50" fill="none"/>
+    <circle cx="120" cy="120" r="30" fill="none"/>
+  </g>
+  <!-- Diagonal guide -->
+  <g stroke="#cbd5f1" stroke-width="1" opacity="0.6">
+    <line x1="50" y1="50" x2="190" y2="190"/>
+    <line x1="190" y1="50" x2="50" y2="190"/>
+  </g>
+  <!-- State dot -->
+  <circle id="state" cx="160" cy="70" r="7" fill="#0a84ff" stroke="#5856d6" stroke-width="2.5" filter="url(#softGlow)"/>
+  <!-- Dot ring for elegance -->
+  <circle id="stateRing" cx="160" cy="70" r="12" fill="none" stroke="#9cc9ff" stroke-width="1.2" opacity="0.6"/>
+</svg>

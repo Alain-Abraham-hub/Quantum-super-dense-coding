@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Super‑Dense Coding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@400;500;600&family=SF+Pro+Text:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="app">
+    <div class="title-bar">
+      <h1>Super‑Dense Coding</h1>
+    </div>
+
+    <div id="timeline" class="timeline" style="display: none;">
+      <div class="timeline-step active">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Create Bell Pair</div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Encode Bits</div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Decode</div>
+      </div>
+      <div class="timeline-line"></div>
+      <div class="timeline-step">
+        <div class="timeline-dot"></div>
+        <div class="timeline-label">Measure</div>
+      </div>
+    </div>
+
+    <div class="container">
+      <!-- Left Panel -->
+      <aside class="panel left-panel">
+        <h3>Protocol Info</h3>
+        
+        <div class="status-row">
+          <div class="status-label">Bell Pair</div>
+          <div id="bellStatus" class="status-badge pending">pending</div>
+        </div>
+        
+        <div id="bellInfo" style="display: none; margin-top: 16px;">
+          <div class="info-item">
+            <span class="info-key">State:</span>
+            <span id="bellState" class="info-value"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-key">State Vector:</span>
+            <span id="stateVector" class="info-value"></span>
+          </div>
+        </div>
+
+        <div class="status-row" id="encodeStatusRow" style="margin-top: 16px;">
+          <div class="status-label">Encode</div>
+          <div id="encodeStatus" class="status-badge pending">pending</div>
+        </div>
+        
+        <div id="encodeInfo" style="display: none; margin-top: 16px;">
+          <div class="info-item">
+            <span class="info-key">Bits:</span>
+            <span id="encodedBits" class="info-value"></span>
+          </div>
+          <div class="info-item">
+            <span class="info-key">Gates:</span>
+            <span id="encodedGates" class="info-value"></span>
+          </div>
+        </div>
+
+        <!-- Decode Status -->
+        <div class="status-row" id="decodeStatusRow" style="margin-top: 16px;">
+          <div class="status-label">Decode</div>
+          <div id="decodeStatus" class="status-badge pending">pending</div>
+        </div>
+        <div id="decodeInfo" style="display: none; margin-top: 16px;">
+          <div class="info-item">
+            <span class="info-key">Applied:</span>
+            <span id="decodeApplied" class="info-value">CNOT → H</span>
+          </div>
+        </div>
+
+        <!-- Measure Status -->
+        <div class="status-row" id="measureStatusRow" style="margin-top: 16px;">
+          <div class="status-label">Measure</div>
+          <div id="measureStatus" class="status-badge pending">pending</div>
+        </div>
+        <div id="measureInfo" style="display: none; margin-top: 16px;">
+          <div class="info-item">
+            <span class="info-key">Result:</span>
+            <span id="measureResultBits" class="info-value"></span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Middle Panel -->
+      <main class="panel middle-panel">
+        <h3>Main Menu</h3>
+        <div id="initContainer" class="init-container">
+          <p class="init-text">Click the button below to initialize the quantum super-dense coding process</p>
+          <button id="initBtn" class="init-button">Initialize Process</button>
+        </div>
+
+        <div id="bellPairContainer" class="init-container" style="display: none;">
+          <p class="init-text">Ready to create an entangled Bell pair?</p>
+          <button id="createBellBtn" class="init-button">Create Bell Pair</button>
+        </div>
+
+        <div id="animationContainer" class="animation-container" style="display: none;">
+          <div class="bell-animation">
+            <div class="qubit qubit-a"></div>
+            <div class="entanglement-line"></div>
+            <div class="qubit qubit-b"></div>
+          </div>
+          <p class="animation-text">Entangling qubits...</p>
+        </div>
+
+        <div id="encodePromptContainer" class="init-container" style="display: none;">
+          <p class="init-text">Bell pair created. Ready to encode?</p>
+          <button id="encodePromptBtn" class="init-button">Encode</button>
+        </div>
+
+        <div id="encodeContainer" class="init-container" style="display: none;">
+          <p class="init-text">Select classical bits to encode:</p>
+          <div class="encode-bits">
+            <button class="encode-btn" data-bits="00">00 → I</button>
+            <button class="encode-btn" data-bits="01">01 → X</button>
+            <button class="encode-btn" data-bits="10">10 → Z</button>
+            <button class="encode-btn" data-bits="11">11 → XZ</button>
+          </div>
+        </div>
+
+        <!-- Bloch sphere visualization shown after encoding -->
+        <div id="blochContainer" class="card" style="display: none; text-align: center;">
+          <h4 style="margin: 0 0 12px 0;">Encoded Qubit (Bloch Sphere)</h4>
+          <div id="blochSvgContainer" style="display:flex; align-items:center; justify-content:center;"></div>
+          <div style="margin-top: 12px;">
+            <div class="info-item" style="justify-content: center; border: none;">
+              <span class="info-key">State Vector:</span>
+              <span id="encodedStateVector" class="info-value"></span>
+            </div>
+          </div>
+          <div style="margin-top: 16px;">
+            <button id="sendToBobBtn" class="init-button">Send to Bob</button>
+          </div>
+        </div>
+
+        <div id="gatesContainer" style="display: none;">
+          <div class="gates-info">
+            <h4>Gates Applied</h4>
+            <div id="gatesDisplay" class="gates-display"></div>
+          </div>
+        </div>
+
+        <!-- Legacy prompt retained but unused -->
+        <div id="sendPromptContainer" class="init-container" style="display: none;">
+          <p class="init-text">Encoding complete. Ready to send qubit to Bob?</p>
+          <button class="init-button">Send to Bob</button>
+        </div>
+
+        <div id="sendAnimationContainer" class="animation-container" style="display: none;">
+          <div class="send-animation">
+            <div class="qubit-packet"></div>
+            <div class="transfer-arrow">→</div>
+          </div>
+          <p class="animation-text">Sending qubit to Bob...</p>
+        </div>
+
+        <div id="decodePromptContainer" class="init-container" style="display: none;">
+          <p class="init-text">Qubit received by Bob. Ready to decode?</p>
+          <button id="decodePromptBtn" class="init-button">Apply CNOT & Hadamard</button>
+        </div>
+
+        <div id="decodeGatesContainer" class="animation-container" style="display: none;">
+          <div class="gates-sequence">
+            <div class="gate-step">
+              <div class="gate-label">CNOT</div>
+              <div class="gate-visual"></div>
+            </div>
+            <div class="gate-arrow">→</div>
+            <div class="gate-step">
+              <div class="gate-label">Hadamard</div>
+              <div class="gate-visual"></div>
+            </div>
+          </div>
+          <p class="animation-text">Applying decoding gates...</p>
+        </div>
+
+        <!-- Circuit visualization shown after decode animation -->
+        <div id="circuitContainer" class="card" style="display: none; text-align: center;">
+          <h4 style="margin: 0 0 12px 0;">Bob's Decoding Circuit</h4>
+          <div id="circuitSvgContainer" style="display:flex; align-items:center; justify-content:center;"></div>
+        </div>
+
+        <div id="measurePromptContainer" class="init-container" style="display: none;">
+          <p class="init-text">Decoded state ready. Ready to measure?</p>
+          <button id="measurePromptBtn" class="init-button">Measure Qubits</button>
+        </div>
+
+        <div id="measureResultsContainer" class="card" style="display: none;">
+          <h4>Measurement Results</h4>
+          <div class="results-content">
+            <div class="result-row">
+              <span class="result-label">Decoded State (Dirac):</span>
+              <span id="decodedDirac" class="result-value mono"></span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Qubit q0:</span>
+              <span id="measureQ0" class="result-value"></span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Qubit q1:</span>
+              <span id="measureQ1" class="result-value"></span>
+            </div>
+            <div class="result-row">
+              <span class="result-label">Measured Bits:</span>
+              <span id="measuredBits" class="result-value"></span>
+            </div>
+          </div>
+        </div>
+
+        <div id="formContainer" class="card" style="display: none;">
+          <form id="form" class="form">
+            <label class="label">Input Bits</label>
+            <div class="segmented">
+              <button type="button" data-bits="00" class="seg">00</button>
+              <button type="button" data-bits="01" class="seg">01</button>
+              <button type="button" data-bits="10" class="seg">10</button>
+              <button type="button" data-bits="11" class="seg">11</button>
+            </div>
+
+            <label class="checkbox">
+              <input type="checkbox" id="randomState" />
+              <span>Random initial Bell state</span>
+            </label>
+
+            <button class="primary" type="submit">Run</button>
+          </form>
+
+          <section class="results" id="results" hidden>
+            <div class="row"><span class="key">Input</span><span id="inBits" class="val"></span></div>
+            <div class="row"><span class="key">Decoded</span><span id="outBits" class="val"></span></div>
+            <div class="row"><span class="key">Counts</span><span id="counts" class="val mono"></span></div>
+          </section>
+        </div>
+      </main>
+
+      <!-- Right Panel -->
+      <aside class="panel right-panel">
+        <h3>Status</h3>
+        <div class="status-row">
+          <div class="status-label">Backend</div>
+          <div id="backendStatus" class="status-badge pending">checking…</div>
+        </div>
+        <div class="status-row" style="margin-top: 16px;">
+          <div class="status-label">Process</div>
+          <div id="processStatus" class="status-badge waiting">waiting</div>
+        </div>
+
+        <div style="margin-top: 28px; padding-top: 28px; border-top: 1px solid rgba(0, 0, 0, 0.1);">
+          <h4 style="margin: 0 0 12px 0; font-size: 13px; font-weight: 600; color: #333;">Recipients</h4>
+          <div class="status-row">
+            <div class="status-label">Sender</div>
+            <div style="font-size: 14px; font-weight: 500; color: #0a84ff;">Alice</div>
+          </div>
+          <div class="status-row">
+            <div class="status-label">Receiver</div>
+            <div style="font-size: 14px; font-weight: 500; color: #0a84ff;">Bob</div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="footer"></footer>
+  </div>
+
+  <script type="module" src="/app.js"></script>
+</body>
+</html>
+
